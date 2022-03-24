@@ -1,0 +1,793 @@
+                                                      |###############|
+                                                      |#PROJECT-NOTES#|
+                                                      |###############|
+======================================================================================================================================================= 
+Spring Configuration with Java Annotations|
+==========================================|           **spring-demo-annotations project**   <--- Example Project.
+Inversion of Control:|
+=====================|
+                                                     What are Java Annotations?                                 Boot
+                                       * Special labels/markers added to Java classes                           Color: Silver
+                                       * Provide meta-data about the class                                      Style: Jewel
+                                       * Processed at compile time or run-time                                  Code: 1460
+                                         for special processing                                                 SKU: 10072090
+                                                                                                                Size US: 8
+                                                                                                                Size UK: 6
+                                                                                                                
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+                                         
+                                         Annotation Example
+                                 * We've seen annotations already...
+                                                   
+                                                   public class TrackCoach implements Coach {
+                                                   
+                               Annotation -------> @Override
+                                                   public String get DailyWorkout() {
+                                                     return "Run a hard 5k";
+                                                  }
+                                                  ...
+                                                 }
+                                                 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                            Why Spring Configuration with Annotations?
+                                            
+                               * XML Configuration can be verbose
+                               
+                               * Configure your Spring Beans with Annotations
+                               
+                               * Annotations minimizes the XML configuration
+                               
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                           Scanning for Component Classes
+                                           
+                              * Spring will scan your Java classes for special annotations
+                              
+                              * Automatically register the beans in the Spring Container 
+                              
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                            Development Process:                                         Step-By-Step
+                                            
+                              1) Enable Component scanning in Spring config file  
+                              
+                                  <beans ... >
+                                     <context:component-scan base-package="com.lov2code.springdemo" />
+                                  </beans>   
+                              
+                              2) Add the @Componenet Annotation to your Java classes
+                              
+                                  @Component("thatSillyCoach")
+                                  public class TennisCoach implements Coach {
+                                  
+                                    @Override
+                                    public String getDailyWorkout() {
+                                      return "Practice your backhand volley";
+                                      }
+                                      
+                                    }  
+                              
+                              3) Retrieve bean from Spring container
+                              
+                                * Same coding as before ... nothing changes.
+                                
+                               Coach theCoach = context.getBean("thatSillyCoach", Coach.class);
+                              
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                                                                                         
+                                                                  
+                                 ***When Adding in jar files MAKE SURE THEY ARE IN THE CLASSPATH***
+                                                                                                                
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                             Spring also supports Default Bean IDs
+                                             
+                                    * Default bean id: the class name, make first letter lower-case
+                                    
+                                    Class Name                         Default Bean Id
+                                    Tennis Coach    -------------->    tennisCoach
+                                    
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                    Code example
+                                 @Component
+                                 public class TenisCoach implements Coach {
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~       
+                                 //TODO Get the bean from spring container
+                                 Coach theCoach = context.getBean("tennisCoach", Coach.class);                                    
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+=======================================================================================================================================================
+Practice Activity # 4 |
+======================|                                                            Start date: 03/22/22   End Date: 00/00/00
+ 
+                             Inversion of Control with Annotations
+                             
+                1) Define a new Coach implementation using Annotations
+                  
+                2) Reference the new coach implementation in your main application.
+                
+                3) Test your application to verify you are getting information from your new 
+                   coach implementation.
+                
+======================================================================================================================================================= 
+Dependency Injection:|
+=====================|
+                                  Spring Dependency Injection with Annotations and Autowiring
+                                  
+                  Demo Example:
+                  
+            * Our Coach already provides daily workouts
+            
+            * Now will also provide daily fortunes                Coach -----------
+               * New helper: FortuneService                                       |
+               * This is a dependency                                       FortuneService
+               
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                    What is Spring AutoWiring?
+                                                    
+                                   * For dependency injection, Spring can use auto wiring
+                                   
+                                   * Spring will look for a class that matches the property
+                                   * matches by type: class or interface
+                                   
+                                   * Spring will inject it automatically ... hence it is autowired
+                                   
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                     Autowiring Example
+                                                     
+                  * Injecting FortuneService into a Coach implementation
+                  
+                  * Spring will scan @Components
+                  
+                  * Any one implements FortuneService interface???
+                  
+                  * If so, let's inject them. For example: HappyFortuneService
+                  
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                 Autowiring Injection Types
+                                                 
+                              * Constructor Injection
+                              
+                                Development Process:         Step-By-Step
+                                
+                                    1) Define the dependency interface and class
+                                    
+                                          File: FortuneService.java
+                                             public interface FortuneService {
+                                             
+                                                public String getFortune();
+                                                
+                                                                        File: HappyFortuneService.java
+                                                                                @component
+                                                                                public class HappyFortuneService implements FortuneService {
+                                                                                
+                                                                                  public String getFortune() {
+                                                                                    return "Today is your lucky day!";
+                                                                                   }
+                                                                                 }  
+                                                                                 
+                                    2) create a constructor in your class for injections
+                                    
+                                           File: TennisCoach.java
+                                             @Component
+                                             public class TennisCoach implements Coach {
+                                             
+                                               private FortuneService fortuneService;
+                                               
+                                               public TennisCoach(FortuneService theFortuneService) {
+                                                 fortuneService = theFortuneService;
+                                               }
+                                               ...
+                                             }  
+                                    
+                                    3) Configure the dependency injection with @Autowired Annotation
+                                    
+                                            File: TennisCoach.java
+                                              @Component
+                                             public class TennisCoach implements Coach {
+                                             
+                                               private FortuneService fortuneService;
+                                               
+                                               @Autowired
+                                               public TennisCoach(FortuneService theFortuneService) {
+                                                 fortuneService = theFortuneService;
+                                               }
+                                               ...
+                                             }  
+                                    
+                              * Setter Injection
+                              
+                                 Development Process:         Step-By-Step
+                                
+                                   1) Create setter method(s) in your class for injections
+                                   
+                                           File: TennisCoach.java
+                                              @Component
+                                             public class TennisCoach implements Coach {
+                                             
+                                               private FortuneService fortuneService;
+                                               
+                                               public TennisCoach() {
+                                               }
+                                               
+                                               public void setFortuneService(FortuneService fortuneService) {
+                                                 this.fortuneService = fortuneService;
+                                               }
+                                               ...
+                                             }  
+                                             
+                                   2) Configure the dependency injection with @Autowired Annotation
+                                   
+                                          File: TennisCoach.java
+                                                    @Component
+                                                    public class TennisCoach implements Coach {
+                                             
+                                                    private FortuneService fortuneService;
+                                               
+                                                     public TennisCoach() {
+                                                      }
+                                                    
+                                                    @Autowired
+                                                    public void setFortuneService(FortuneService fortuneService) {
+                                                         this.fortuneService = fortuneService;
+                                                      }
+                                                      ...
+                                                     }  
+                                                     
+                              * Field Injections
+                                          
+                                     Development Process:         Step-By-Step
+                                     
+                                     1) Configure the dependency injection with Autowired Annotation
+                                     
+                                          * Applied Directly to the field
+                                          * No need for setter methods
+                                          
+                                             File:TennisCoach.java                                                 
+                                                    public class TennisCoach implements Coach {
+                                                    
+                                                    @Autowired
+                                                    private FortuneService fortuneService;
+                                               
+                                                     public TennisCoach() {
+                                                      }
+                                                   
+                                                      // no need for setter methods
+                                                      ...
+                                                     }                                            
+                                                                                                     
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                    
+
+======================================================================================================================================================================
+Qualifiers for Dependency Injection:|
+------------------------------------|
+
+                                             Autowiring 
+                                                     
+                  * Injecting FortuneService into a Coach implementation
+                  
+                  * Spring will scan @Components
+                  
+                  * Any one implements FortuneService interface???
+                  
+                  * If so, let's inject them ... oops which one?
+                  
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                 Multiple FortuneService Implementations
+                                 
+                                                          FortuneService  <------------RestFortuneService
+                                                 -->------|     ^      ^    
+                                                 |              |      |
+                                  HappyFortuneService           |      DatabaseFortuneService  
+                                                                |
+                                                    RandomFortuneService
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                              Be Specific! - @Qualifier                              
+                    
+                     @Component
+                     public class TennisCoach implements Coach {
+                     
+                     @Autowired
+                     @Qualifier("happyFortuneService")                        
+                     private FortuneService fortuneService;
+                     
+                     ...
+                     
+                    }
+                     
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                               Injection Types
+                                               
+                                  * Can apply @Qualifier annotation to
+                                  
+                                      *Constructor injection
+                                      
+                                      * Setter injection methods
+                                      
+                                      * Field injection
+                                      
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                      
+
+                                                Java String Array example 
+                                                
+                                  ********Located in RandomFortuneService.java******
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                          Annotations - Default Bean Names - The Special Case
+                                                 Annotations - Default Bean Names ... and the Special Case
+
+                             In general, when using Annotations, for the default bean name, Spring uses the following rule.
+
+                              If the annotation's value doesn't indicate a bean name, an appropriate name will be built based on 
+                              the short name of the class (with the first letter lower-cased).
+
+                                  For example:
+
+                                      HappyFortuneService --> happyFortuneService
+
+                                         ---
+
+                              However, for the special case of when BOTH the first and second characters of the class name are 
+                              upper case, then the name is NOT converted.
+
+                             For the case of RESTFortuneService
+
+                                     RESTFortuneService --> RESTFortuneService
+
+                             No conversion since the first two characters are upper case.
+
+                            Behind the scenes, Spring uses the Java Beans Introspector to generate the default bean name. 
+                            
+                            Also, here's a link to the documentation.
+
+                                   - https://docs.oracle.com/javase/8/docs/api/java/beans/Introspector.html#decapitalize(java.lang.String)
+
+                             ---
+
+                                  As always, you can specify a name for your bean.
+
+                                              @Component("foo")
+                                                 public class RESTFortuneService .... {
+    
+                                                      }
+                                      Then you can access it using the name of "foo". Nothing tricky to worry about :-)
+
+                              Hope this helps. Happy Coding! :-)
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                            Using @Qualifier with Constructors
+@Qualifier is a nice feature, but it is tricky when used with Constructors.
+
+The syntax is much different from other examples and not exactly intuitive.  Consider this the "deep end of the pool" when it comes to Spring configuration LOL :-)
+
+You have to place the @Qualifier annotation inside of the constructor arguments. 
+
+Here's an example from our classroom example. I updated it to make use of constructor injection, with @Autowired and @Qualifier. Make note of the code in bold below:
+
+---
+package com.luv2code.springdemo;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+@Component
+public class TennisCoach implements Coach {
+
+    private FortuneService fortuneService;
+
+    // define a default constructor
+    public TennisCoach() {
+        System.out.println(">> TennisCoach: inside default constructor");
+    }
+    
+    @Autowired
+    public TennisCoach(@Qualifier("randomFortuneService") FortuneService theFortuneService) {
+
+        System.out.println(">> TennisCoach: inside constructor using @autowired and @qualifier");
+        
+        fortuneService = theFortuneService;
+    }
+       
+    
+    /*
+    @Autowired
+    public void doSomeCrazyStuff(FortuneService theFortuneService) {
+        System.out.println(">> TennisCoach: inside doSomeCrazyStuff() method");
+        fortuneService = theFortuneService;
+    }
+    */
+    
+    /*
+    @Autowired
+    public TennisCoach(FortuneService theFortuneService) {
+        fortuneService = theFortuneService;
+    }
+    */
+    
+    @Override
+    public String getDailyWorkout() {
+        return "Practice your backhand volley";
+    }
+
+    @Override
+    public String getDailyFortune() {
+        return fortuneService.getFortune();
+    }
+
+}
+
+---
+
+For detailed documentation on using @Qualifier with Constructors, see this link in the Spring Reference Manual
+
+https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-autowired-annotation-qualifiers
+
+
+ ====
+
+@Qualifier with Setter Injection
+
+You can use similar syntax with Setter Injection. You can use @Qualifier in method arguments line, such as
+
+
+
+	@Autowired
+	public void setFortuneService(@Qualifier("randomFortuneService") FortuneService theFortuneService) {
+		System.out.println(">> TennisCoach: inside setFortuneService() method");
+		this.fortuneService = theFortuneService;
+	}
+
+
+You can also use the @Qualifier above the method name. For example, here's the syntax
+
+
+
+	@Autowired
+	@Qualifier("randomFortuneService")
+	public void setFortuneService(FortuneService theFortuneService) {
+		System.out.println(">> TennisCoach: inside setFortuneService() method");
+		this.fortuneService = theFortuneService;
+	}
+
+
+Feel free to use the approach that works best for you.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FAQ: How to inject properties file using Java annotations
+
+Answer:
+
+This solution will show you how inject values from a properties file using annotatons. The values will no longer be hard coded in the Java code.
+
+1. Create a properties file to hold your properties. It will be a name value pair.  
+
+New text file:  src/sport.properties
+
+foo.email=myeasycoach@luv2code.com
+foo.team=Silly Java Coders
+Note the location of the properties file is very important. It must be stored in src/sport.properties
+
+2. Load the properties file in the XML config file.
+
+File: applicationContext.xml
+
+Add the following lines:
+
+    <context:property-placeholder location="classpath:sport.properties"/>  
+
+This should appear just after the <context:component-scan .../> line
+
+3. Inject the properties values into your Swim Coach: SwimCoach.java
+
+   
+
+@Value("${foo.email}")
+private String email;
+    
+@Value("${foo.team}")
+private String team;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+===================================================================================================================================================================================
+Practice Activity #5|
+====================|
+                                      Dependency Injection with Annotations     
+
+                            1. Define a new implementation for the FortuneService.
+
+                                   * Your fortune service should read the fortunes from a file.   
+
+                                   * The fortune service should load the fortunes into an array   
+
+                                   * When the getFortune() method is called it would return a random fortune from the array.   
+
+                            2) Inject your new dependency into your Coach implementation
+
+                            3) Test your application to verify you are getting random fortunes based on your fortunes file.   
+                            
+================================================================================================================================================================================
+Bean Scopes with Annotations: |
+==============================|
+
+                                            Bean Scopes
+                                            
+                          * Scope refers to the life-cycle of a bean
+                          
+                          * How long does the bean live?
+                          
+                          * How many instances are created?
+                          
+                          * How is the bean shared?
+                          
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------                          
+                          
+                          Explicitly Specify Bean Scope
+                          
+                             @Component
+                             @Scope("singleton")
+                             public class TennisCoach implements Coach {
+                             
+                             ...
+                             
+                             }
+                             
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                   Prototype Scope Example
+                                   
+                                   @Component
+                                   @Scope("prototype")
+                                   public class TennisCoach implements Coach {
+                             
+                                   ...
+                             
+                                   }
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Bean Life-Cycle Method Annotations:|
+===================================|
+
+
+                               Development process         Step-By-Step
+                               
+                               1) Define your methods for init and destroy
+                               
+                                     @Componenet
+                                     public class TennisCoach implements coach {
+                                     
+                                     @PostConstruct
+                                     public void doMyStartupStuff() { ... }
+                                     
+                                  ...
+                                  
+                                 }
+                               
+                               2) Add annotations: @PostConstruct and @PreDestroy  
+                               
+                                      @Componenet
+                                       public class TennisCoach implements coach {
+                                     
+                                       @PreDestroy
+                                       public void doMyStartupStuff() { ... }
+                                     
+                                       ...
+                                  
+                                    }     
+                                    
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                      Special Note about @PostConstruct and @PreDestroy Method Signatures
+
+                            I want to provide additional details regarding the method signatures of @PostContruct and @PreDestroy methods.
+
+                                      Access modifier 
+                                          ^-The method can have any access modifier (public, protected, private)
+
+                                      Return type
+                                           ^-The method can have any return type. However, "void' is most commonly used. 
+                                           If you give a return type just note that you will not be able to capture the 
+                                           return value. As a result, "void" is commonly used.
+
+                                      Method name
+                                           ^-The method can have any method name.
+
+                                       Arguments
+                                            ^-The method can not accept any arguments. The method should be no-arg.      
+                                            
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+**********************************************************************************************************************************************************************************
+                                                     HEADS UP - FOR JAVA 9, 10 and 11 USERS - @PostConstruct and @PreDestroy
+
+If you are using Java 9 or higher, then you will encounter an error when using @PostConstruct and @PreDestroy in your code. 
+
+These are the steps to resolve it. Come back to the lecture if you hit the error. 
+
+Error
+
+Eclipse is unable to import @PostConstruct or @PreDestroy
+
+This happens because of Java 9 and higher. 
+
+When using Java 9 and higher, javax.annotation has been removed from its default classpath. That's why we Eclipse can't find it.
+
+---
+
+Solution
+
+1. Download the javax.annotation-api-1.3.2.jar from 
+
+https://search.maven.org/remotecontent?filepath=javax/annotation/javax.annotation-api/1.3.2/javax.annotation-api-1.3.2.jar
+
+2. Copy the JAR file to the lib folder of your project
+
+---
+
+Use the following steps to add it to your Java Build Path.
+
+3. Right-click your project, select Properties
+
+4. On left-hand side, click Java Build Path
+
+5. In top-center of dialog, click Libraries
+
+6. Click Classpath and then Click Add JARs ...
+
+7. Navigate to the JAR file <your-project>/lib/javax.annotation-api-1.3.2.jar
+
+8. Click OK then click Apply and Close
+
+Eclipse will perform a rebuild of your project and it will resolve the related build errors.                                                 
+************************************************************************************************************************************************************************************
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+=======================================================================================================================================================
+Practice Activity # 6|
+=====================|                                                            Start date: 03/22/22   End Date: 00/00/00
+ 
+                             Bean Scopes with Annotations
+                             
+                1) Modify your file based fortune service to make use of the 
+                     @PostConstructor annotation
+                  
+                2) In the @PostConstruct code, read the fortunes from a text file (.txt).
+                
+                3) Test your application to verify your@PostConstruct code is being 
+                   executed. Hint, add some println statements.
+                
+======================================================================================================================================================= 
+Spring Configuration with Java Code (no xml):|
+=============================================|
+
+                                               Java Configuration
+                                               
+                           * Instead of configuring Spring container using XML
+                           
+                           * Configure the Spring container with Java Code
+                           
+                           
+                           3 Ways of configuring Spring container
+                           
+                           1) Full XML Config
+                           
+                           2) XML component Scan
+                           
+                           3) Java Configuration Class
+                           
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                    Development Process         Step-By-Step  
+                                    
+                                    1) Create a Java class and annotate as @Configuration
+                                                
+                                                @Configuration
+                                                public class SprotConfig {
+                                                
+                                              }
+                                    
+                                    2) Add component scanning support: @ComponentScan (optional)
+                                    
+                                               @Configuration
+                                               @ComponentScan("com.luv2code.springdemo")
+                                               public class SprotConfig {
+                                               
+                                             }
+                                    
+                                    3) Read Spring Java configuration class
+                                    
+                                              AnnotationConfigApplicationContext context =
+                                                    new AnnotationConfigApplicationContext(SportConfig.class);
+                                    
+                                    4) Retrieve bean from Spring container    
+                                    
+                                           Coach theCoach = context.getBean("tennisCoach", Coach.class);
+                                           
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                               
+                                               Define Beans in Spring using Java Code
+                                               
+                                Our new Coach
+                                
+                                public class SwimCoach implements Coach {
+                                ...
+                                }
+                                
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                
+                                
+                                Development process                                        Step-By-Step
+                                
+                                      1) Define method to expose bean
+                                             
+                                             @Configuration
+                                             public class SprotConfig {
+                                             
+                                               @Bean
+                                               public Coach swumCoach() {
+                                                SwimCoach mySwimCoach = new SwimCoach();
+                                                
+                                                return mySwimCoach;
+                                              }
+                                              
+                                           }
+                                           
+                                         **Define each bean individually in this config class**                                   
+                                
+                                      2) Inject bean dependencies
+                                      
+                                           @Configuration
+                                           public class SprotConfig{
+                                           
+                                              @Bean
+                                             public FortuneService happyFortuneService() {
+                                               return new HappyFortuneService();
+                                              }
+                                              
+                                              @Bean
+                                              public Coach swimCoach() {
+                                                SwimCoach mySwimCoach = new SwimCoach( happyFortuneService() );
+                                                
+                                                return mySwimCoach;
+                                               }
+                                               
+                                             }
+                                
+                                
+                                      3) Read Spring Java configuration class
+                                      
+                                              AnnotationConfigApplicationContext context =
+                                                  new AnnotationConfigApplicationContext(SportConfig.class);                                
+                                
+                                      4) Retrieve bean from Spring container     
+                                      
+                                               Coach theCoach = context.getBean("swimCoach", Coach.class);
+                                               
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                
+=======================================================================================================================================================
+Practice Activity # 7|
+=====================|                                                            Start date: 03/22/22   End Date: 00/00/00
+
+                             
+                             Inversion of Control and Dependency Injection with Java Code
+                                                                                          
+                                   1) Create a new Coach implementation.
+                                                    
+                                   2) Create a new fortune service implementation (return a single hard-coded fortune)
+
+                                   3) Create a Java configuration class to perform IoC and DI with those classes.
+
+                                   4) Develop a main application to retrieve your coach implementation.
+                                   
+                                   5) Test your application and verify your coach implementation is wired up as desired.    
+
+===========================================================================================================================================================================                         
